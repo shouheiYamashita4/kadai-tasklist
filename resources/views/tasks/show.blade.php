@@ -13,4 +13,6 @@
             <th>{{ $task->content }}</th>
         </tr>
     </table>
+    
+    {!! link_to_route('tasks.edit', 'Modify this task' ['id' => $task->id], ['class' => 'btn btn-light']) !!}
 @endsection
