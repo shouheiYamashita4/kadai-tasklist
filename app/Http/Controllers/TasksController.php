@@ -15,11 +15,25 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
+        $data = [];
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+            
+            $data = [
+                'user' => $user,
+                'tasks' => $tasks,
+            ];
+            
+            return view('welcome', $data);
+        } else {
+            return view('welcome');
+        }
+        // $tasks = Task::all();
         
-        return view('tasks.index', [
-           'tasks' => $tasks, 
-        ]);
+        // return view('tasks.index', [
+        //   'tasks' => $tasks, 
+        // ]);
     }
 
     /**
@@ -29,11 +43,21 @@ class TasksController extends Controller
      */
     public function create()
     {
-        $task = new Task;
+        $task = new \App\Task;
         
-        return view('tasks.create', [
-           'task' => $task, 
-        ]);
+        
+        // $data = [];
+        // if (\Auth::check()) {
+        //     $user = \Auth::user();
+        //     $task = new \App\Task;
+            
+        //     $data = [
+        //         'user' => $user,
+        //         'task' => $task,
+        //     ];
+        // }
+        
+        return view('tasks.create', compact('task'));
     }
 
     /**
@@ -49,10 +73,10 @@ class TasksController extends Controller
             'content' => 'required|max:191',
         ]);
         
-        $task = new Task;
-        $task->status = $request->status;
-        $task->content = $request->content;
-        $task->save();
+        $request->user()->tasks()->create([
+            'status' => $request->status,
+            'content' => $request->content,
+        ]);
         
         return redirect('/');
     }
@@ -65,7 +89,7 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        $task = Task::find($id);
+        $task = \App\Task::find($id);
         
         return view('tasks.show', [
             'task' => $task,
@@ -80,7 +104,7 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
-        $task = Task::find($id);
+        $task = \App\Task::find($id);
         
         return view('tasks.edit', [
             'task' => $task,
@@ -101,7 +125,7 @@ class TasksController extends Controller
             'content' => 'required|max:191',
         ]);
         
-        $task = Task::find($id);
+        $task = \App\Task::find($id);
         $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
@@ -117,8 +141,11 @@ class TasksController extends Controller
      */
     public function destroy($id)
     {
-        $task = Task::find($id);
-        $task->delete();
+        $task = \App\Task::find($id);
+        
+        if(\Auth::id() == $task->user_id) {
+            $task->delete();
+        }
         
         return redirect('/');
     }

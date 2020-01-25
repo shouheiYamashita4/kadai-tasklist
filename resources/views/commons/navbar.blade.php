@@ -10,14 +10,8 @@
             <ul class="navbar-nav mr-auto"></ul>
             <ul class="navbar-nav">
                 @if (Auth::check())
-                    <li class="nav-item"><a href="#" class="nav-link">Users</a></li>
-                    <li class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">{{ Auth::user()->name }}</a>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            <li class="nav-item">{!! link_to_route('tasks.create', 'Add new task', [], ['class' => 'nav-link']) !!}</li>
-                            <li class="dropdown-item">{!! link_to_route('logout.get', 'Logout') !!}</li>
-                        </ul>
-                    </li>
+                    <li class="nav-item">{!! link_to_route('tasks.create', 'Add new task', [], ['class' => 'nav-link']) !!}</li>
+                    <li class="nav-item">{!! link_to_route('logout.get', 'Logout', [], ['class' => 'nav-link']) !!}</li>
                 @else
                     <li class="nav-item">{!! link_to_route('signup.get', 'Signup', [], ['class' => 'nav-link']) !!}</li>
                     <li class="nav-item">{!! link_to_route('login', 'Login', [], ['class' => 'nav-link']) !!}</li>
